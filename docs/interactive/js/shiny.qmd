@@ -17,11 +17,11 @@ Here is the [K-Means Clustering](https://shiny.rstudio.com/gallery/kmeans-exampl
 
 You can see the document deployed at <https://jjallaire.shinyapps.io/kmeans-shiny-ojs/>.
 
-## Source Code
+### Source Code
 
 Let's take a look at the source code. On the client we have familiar looking OJS inputs and a plot laid out using `panel: sidebar` and `panel: fill`:
 
-````java
+```` java
 ```{{ojs}}
 //| panel: sidebar
 vars = ["Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width"]
@@ -59,7 +59,7 @@ Note that the plotting code references the variables `selectedData` and `cluster
 
 Here is the server code:
 
-````java
+```` java
 ```{{r}}
 #| context: server
 
@@ -81,3 +81,36 @@ Note that we reference several inputs that were defined by `viewof` expressions 
 
 We create two reactive values (`selectedData` and `clusters`) and provide them to the client using `ojs_define()`. The plot will be automatically re-drawn on the client side when these values change.
 
+## Bindings
+
+In the example above we took advantage of the fact that by default OJS `viewof` expressions are propagated to Shiny inputs (e.g `input$xcol`). This provides a reasonable separation of concerns, and prevents excess network traffic in the case that you have large OJS reactives.
+
+However, if you want to use other OJS reactives as Shiny inputs this is also possible using the `ojs-exports` option. The default behavior maps to the following configuration:
+
+``` yaml
+---
+server:
+  type: shiny
+  ojs-exports: viewof
+---
+```
+
+You can also specify `ojs-exports: all` to cause all OJS reactives to be bound to Shiny inputs:
+
+``` yaml
+---
+server:
+  type: shiny
+  ojs-exports: all
+---
+```
+
+Alternatively, you can specify a list of OJS reactives by name (including using `!` to filter out reactives), and combine this with the `viewof` and `all` options. For example:
+
+``` yaml
+---
+server:
+  type: shiny
+  ojs-exports: [all, !large_dataset]
+---
+```
