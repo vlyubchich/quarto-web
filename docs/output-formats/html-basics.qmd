@@ -96,14 +96,21 @@ html-math-method:
 
 Available math rendering methods include:
 
++-----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Method    | Description                                                                                                                                                                                                                      |
-|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
++===========+==================================================================================================================================================================================================================================+
 | `mathjax` | Use [MathJax](https://www.mathjax.org/) to display embedded TeX math in HTML output.                                                                                                                                             |
++-----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `katex`   | Use [KaTeX](https://github.com/Khan/KaTeX) to display embedded TeX math in HTML output.                                                                                                                                          |
++-----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `webtex`  | Convert TeX formulas to `<img>` tags that link to an external script that converts formulas to images.                                                                                                                           |
++-----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `gladtex` | Enclose TeX math in `<eq>` tags in HTML output. The resulting HTML can then be processed by [GladTeX](https://humenda.github.io/GladTeX/) to produce images of the typeset formulas and an HTML file with links to these images. |
++-----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `mathml`  | Convert TeX math to [MathML](https://www.w3.org/Math/) (note that currently only Firefox and Safari natively support MathML)                                                                                                     |
++-----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `plain`   | No special processing (formulas are put inside a `span` with `class="math").`                                                                                                                                                    |
++-----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Note that this is more detailed documentation on each of these options in the Pandoc [Math Rendering in HTML](https://pandoc.org/MANUAL.html#math-rendering-in-html) documentation.
 
@@ -216,7 +223,7 @@ def fizz_buzz(num):
 
 HTML documents typically have a number of external dependencies (e.g. images, CSS style sheets, JavaScript, etc.). By default these dependencies are placed in a `_files` directory alongside your document. For example, if you render `report.qmd` to HTML:
 
-```{.bash filename="Terminal"}
+``` {.bash filename="Terminal"}
 quarto render report.qmd --to html
 ```
 
@@ -365,6 +372,27 @@ comments: false
 ``` include
 _document-options-end.md
 ```
+
+## HTML Fragments
+
+If you want to produce a fragment of HTML suitable for inclusion in another document rather than an entire HTML document, you can use the `standalone: false` option. For example:
+
+``` yaml
+---
+title: "My Document"
+format:
+  html:
+    standalone: false 
+---
+```
+
+It's important to note though that many features will be disabled for this mode, as many of the more advanced formatting and interactivity behaviors of `html` require injecting CSS and JavaScript into the document `<head>` tag (and `standalone: false` produces only a fragment rather than a full document with `<head>` and `<body>`). Features not available for `standalone: false` include:
+
+-   All CSS styling including the use of Bootstrap themes
+-   Quarto figure and panel layout (e.g. `layout-ncol: 2`)
+-   Anchor sections, reference popups, tabsets, code block copying, and responsive figures.
+
+Another approach to creating fragments of HTML for inclusion in other documents is to use the [Minimal HTML](#minimal-html) feature described below, copying the CSS and JS files included in the `<head>` into the parent document where the HTML will be embedded. This approach is a bit more effort but has the benefit of preserving the features described above (save for Bootstrap themes).
 
 ## Minimal HTML
 
